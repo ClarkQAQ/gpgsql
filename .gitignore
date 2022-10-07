@@ -1,0 +1,11 @@
+# default files
+.env
+/*.ini
+**/*.db
+
+# default directories
+**/vendor
+**/node_modules
+**/test
+pkg/docs/api/
+data/
