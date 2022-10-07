@@ -9,12 +9,22 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/xi2/xz"
 )
 
 var (
-	binaryRootPath string = filepath.Join(os.TempDir(), fmt.Sprintf("gpgsql-%s", release.Sha256))
+	binaryRootPath string = func() string {
+		base, _ := os.UserCacheDir()
+
+		if strings.TrimSpace(base) == "" {
+			base = os.TempDir()
+		}
+
+		return filepath.Join(base, "gpgsql",
+			fmt.Sprintf("%s_%s", release.Version, release.Sha256[:8]))
+	}()
 )
 
 func DecompressBinary(force bool) error {
