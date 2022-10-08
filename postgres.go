@@ -171,7 +171,7 @@ func (g *GpgsqlRuntime) DaemonArgs(opt *PostgreSqlOptions) (args []string, e err
 	return args, nil
 }
 
-func (g *GpgsqlRuntime) Daemon(ctx context.Context, opts ...*PostgreSqlOptions) (e error) {
+func (g *GpgsqlRuntime) Daemon(ctx context.Context, opts ...*PostgreSqlOptions) (kill func() error, e error) {
 	if len(opts) < 1 || opts[0] == nil {
 		opts = append(opts, defaultPostgreSqlOptions)
 	}
@@ -180,11 +180,7 @@ func (g *GpgsqlRuntime) Daemon(ctx context.Context, opts ...*PostgreSqlOptions) 
 
 	args, e := g.DaemonArgs(opt)
 	if e != nil {
-		return e
-	}
-
-	if e := g.Stop(ctx); e != nil {
-		return e
+		return nil, e
 	}
 
 	cmd := exec.CommandContext(ctx, postgresBinary, args...)
@@ -194,7 +190,7 @@ func (g *GpgsqlRuntime) Daemon(ctx context.Context, opts ...*PostgreSqlOptions) 
 	cmd.Dir = binaryRootPath
 
 	if e := cmd.Start(); e != nil {
-		return fmt.Errorf("failed to execute command: %s", e.Error())
+		return nil, e
 	}
 
 	if opt.Wait > 0 {
@@ -209,10 +205,12 @@ func (g *GpgsqlRuntime) Daemon(ctx context.Context, opts ...*PostgreSqlOptions) 
 	defer cancel()
 
 	if e := g.CheckConnection(ctx); e != nil {
-		return fmt.Errorf("failed to check connection: %s", e.Error())
+		return nil, e
 	}
 
-	return nil
+	return func() error {
+		return cmd.Process.Kill()
+	}, nil
 }
 
 func (g *GpgsqlRuntime) ListenAddr() string {
