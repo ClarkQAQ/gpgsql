@@ -9,6 +9,7 @@ import (
 	"gpgsql/release"
 	"io"
 	"net"
+	"os"
 
 	_ "github.com/lib/pq"
 )
@@ -91,13 +92,13 @@ func (g *GpgsqlRuntime) getFreePort() (uint16, error) {
 func (g *GpgsqlRuntime) CheckConnection(ctx context.Context) error {
 	db, e := sql.Open("postgres", g.DSN(g.username))
 	if e != nil {
-		return fmt.Errorf("connection to %s failed: %s", g.DSN(g.username), e.Error())
+		return e
 	}
 
 	defer db.Close()
 
 	if _, e = db.QueryContext(ctx, "SELECT 1"); e != nil {
-		return fmt.Errorf("connection to %s failed: %s", g.DSN(g.username), e.Error())
+		return e
 	}
 
 	return nil
@@ -110,4 +111,28 @@ func (g *GpgsqlRuntime) DSN(dbname string) string {
 
 func (g *GpgsqlRuntime) DB(dbname string) (*sql.DB, error) {
 	return sql.Open("postgres", g.DSN(dbname))
+}
+
+func (g *GpgsqlRuntime) GetUsername() string {
+	return g.username
+}
+
+func (g *GpgsqlRuntime) GetPassword() string {
+	return g.password
+}
+
+func (g *GpgsqlRuntime) IsEmptyData() (bool, error) {
+	if f, e := os.Stat(g.data); e != nil {
+		return false, e
+	} else if !f.IsDir() {
+		return false, e
+	}
+
+	if f, e := os.ReadDir(g.data); e != nil {
+		return false, e
+	} else if len(f) > 0 {
+		return false, nil
+	}
+
+	return true, nil
 }
