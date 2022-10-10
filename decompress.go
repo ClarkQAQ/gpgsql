@@ -5,11 +5,12 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"gpgsql/release"
 	"io"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/ClarkQAQ/gpgsql/release"
 
 	"github.com/xi2/xz"
 )

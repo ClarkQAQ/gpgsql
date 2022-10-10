@@ -1,4 +1,4 @@
-module gpgsql
+module github.com/ClarkQAQ/gpgsql
 
 go 1.19
 

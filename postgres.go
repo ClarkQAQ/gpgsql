@@ -3,7 +3,6 @@ package gpgsql
 import (
 	"context"
 	"fmt"
-	"gpgsql/release"
 	"io"
 	"net"
 	"os"
@@ -11,6 +10,8 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/ClarkQAQ/gpgsql/release"
 )
 
 var (

@@ -3,15 +3,18 @@ package main
 import (
 	"context"
 	"fmt"
-	"gpgsql"
 	"time"
 	"utilware/logger"
+
+	"github.com/ClarkQAQ/gpgsql"
 
 	"github.com/go-pg/pg/v10"
 	"github.com/go-pg/pg/v10/orm"
 )
 
 func main() {
+	logger.GlobalWriter().Level(logger.DefaultLevelNoColor)
+
 	logger.Info("target: %s, arch: %s, version: %s, sha256: %s",
 		gpgsql.ReleaseTarget(), gpgsql.ReleaseArch(), gpgsql.ReleaseVersion(), gpgsql.ReleaseSha256())
 

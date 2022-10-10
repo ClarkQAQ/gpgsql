@@ -6,10 +6,11 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"gpgsql/release"
 	"io"
 	"net"
 	"os"
+
+	"github.com/ClarkQAQ/gpgsql/release"
 
 	_ "github.com/lib/pq"
 )

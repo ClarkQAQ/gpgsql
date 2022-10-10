@@ -4,11 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gpgsql/release"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
+
+	"github.com/ClarkQAQ/gpgsql/release"
 )
 
 var (

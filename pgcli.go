@@ -3,11 +3,12 @@ package gpgsql
 import (
 	"context"
 	"fmt"
-	"gpgsql/release"
 	"os/exec"
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/ClarkQAQ/gpgsql/release"
 )
 
 const (

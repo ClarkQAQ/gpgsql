@@ -4,7 +4,6 @@
 **/*.db
 
 # default directories
-**/vendor
 **/node_modules
 **/test
 pkg/docs/api/
