@@ -70,6 +70,7 @@ var (
 		"windows": {"amd64", "386"},
 	}
 
+	// binary path
 	targetPath = map[string]map[string]string{
 		"darwin": {
 			"initdb":   "bin/initdb",
@@ -88,7 +89,7 @@ var (
 		},
 	}
 
-	proxyAddr = "" // i'm in china, so i need a proxy...
+	proxyAddr = "" // i'm in china, so need a proxy...
 
 	//go:embed postgres.tmpl
 	postgresTmpl string

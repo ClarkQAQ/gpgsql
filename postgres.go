@@ -89,12 +89,23 @@ func (g *GpgsqlRuntime) Data(data string) (e error) {
 	if !filepath.IsAbs(data) {
 		if f, _ := os.Stat(data); f == nil {
 			if e = os.MkdirAll(data, os.ModePerm); e != nil {
-				return fmt.Errorf("failed to create data directory: %s", e.Error())
+				return e
 			}
 		}
 
 		if data, e = filepath.Abs(data); e != nil {
-			return fmt.Errorf("failed to get absolute path of data directory: %s", e.Error())
+			return e
+		}
+	}
+
+	f, e := os.Stat(data)
+	if e != nil {
+		return e
+	}
+
+	if f.Mode().Perm()|PostgresqlDataPerm != 0 {
+		if e := os.Chmod(data, PostgresqlDataPerm); e != nil {
+			return e
 		}
 	}
 

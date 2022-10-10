@@ -14,6 +14,10 @@ import (
 	_ "github.com/lib/pq"
 )
 
+const (
+	PostgresqlDataPerm os.FileMode = 0750
+)
+
 func ReleaseTarget() string {
 	return release.Target
 }

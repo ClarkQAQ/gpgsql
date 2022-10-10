@@ -27,6 +27,7 @@ var (
 	}()
 )
 
+// form https://github.com/fergusstrange/embedded-postgres/blob/master/decompression.go#L23
 func DecompressBinary(force bool) error {
 	xzReader, e := xz.NewReader(bytes.NewReader(release.Archive), 0)
 	if e != nil {
