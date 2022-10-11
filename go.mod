@@ -2,7 +2,7 @@ module github.com/ClarkQAQ/gpgsql
 
 go 1.19
 
-replace utilware => /data/Code/Golang/utilware
+replace utilware => github.com/ClarkQAQ/utilware v0.0.0-20221011033505-5f6223fb57f4
 
 require (
 	github.com/go-pg/pg/v10 v10.10.6

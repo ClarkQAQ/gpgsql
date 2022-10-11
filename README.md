@@ -24,7 +24,6 @@ Golang 内嵌数据库一直是一大难题, Sqlite 虽然现在终于有了纯 
 2. 在 Windows 上面如果用管理员权限运行的就不能使用 `xxx.Daemon` 的方式来启动, 管理员权限会导致 `xxx.Daemon` 无法正常工作, 就只能用 `xxx.Start` 的方式来启动, `pg_cli` 好像会自动处理, 不过在 Posix 系统上面就必须用非管理员运行了,请不要做 root 敢死队...
 3. 由于上游没有提供 Unix (Openbsd/Freebsd) 的二进制包, 所以目前没办法支持这些平台, 如果有人有兴趣, 可以自己编译二进制包, 然后提 PR, 我会合并的. 
 
-
 ### 示例 (Example)：[Example](https://github.com/ClarkQAQ/gpgsql/tree/master/example)
 
 ### 演示 (Demo)：
@@ -62,6 +61,12 @@ if e := g.Start(context.Background(), &gpgsql.PostgreSqlOptions{
 
 ```
 
+### TODO:
+
+1. 添加 ACM 自动机来匹配输出, 以便更好的返回错误信息.
+2. 添加更多的测试用例.
+3. 进一步优化接口, 使其更加易用.
+4. `IsEmptyData` 这个方法的实现有点问题, 在某些情况下应该会误判, 以后再改吧.
 
 ### 参考项目:
     
@@ -70,4 +75,4 @@ if e := g.Start(context.Background(), &gpgsql.PostgreSqlOptions{
 
 ### 版权说明
 
-该项目签署了MIT 授权许可，随意参与以及使用!
+该项目签署了 MIT 授权许可，随意参与以及使用!
