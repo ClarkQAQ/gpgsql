@@ -14,8 +14,8 @@ const (
 	Version = "{{version}}"
     Sha256  = "{{sha256}}"
 
-	InitdbBinary = "{{initdb}}"
-	PgCliBinary  = "{{pg_ctl}}"
+	InitdbBinary   = "{{initdb}}"
+	PgCliBinary    = "{{pg_ctl}}"
 	PostgresBinary = "{{postgres}}"
 )
 
@@ -23,5 +23,3 @@ var (
 	//go:embed postgres-{{target}}-{{arch}}-{{version}}.tar.xz
 	Archive []byte
 )
-
-

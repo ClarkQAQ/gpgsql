@@ -12,10 +12,10 @@ const (
 	Target  = "darwin"
 	Arch    = "amd64"
 	Version = "14.5.0"
-    Sha256  = "053246202f0b1782629250da781e21130e26d61d0ac50cf17b3317faafe88429"
+	Sha256  = "053246202f0b1782629250da781e21130e26d61d0ac50cf17b3317faafe88429"
 
-	InitdbBinary = "bin/initdb"
-	PgCliBinary  = "bin/pg_ctl"
+	InitdbBinary   = "bin/initdb"
+	PgCliBinary    = "bin/pg_ctl"
 	PostgresBinary = "bin/postgres"
 )
 
@@ -23,5 +23,3 @@ var (
 	//go:embed postgres-darwin-amd64-14.5.0.tar.xz
 	Archive []byte
 )
-
-

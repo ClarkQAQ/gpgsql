@@ -138,58 +138,64 @@ func main() {
 
 	for target, archs := range supportedTargets {
 		for _, arch := range archs {
-			metadata, e := getMetadata(target, arch)
-			if e != nil {
-				logger.Fatal("target: %s, arch: %s get metadata failed: %s", target, arch, e.Error())
-			}
-
-			logger.Debug("target: %s, arch: %s, release: %s", target, arch, metadata.Versioning.Release)
-			logger.Debug("download url: %s", fmt.Sprintf(repositoryBinaryURL, target, arch, metadata.Versioning.Release))
-
-			b, e := getArchive(target, arch, metadata.Versioning.Release)
-			if e != nil {
-				logger.Fatal("target: %s, arch: %s, release: %s get archive failed: %s",
-					target, arch, metadata.Versioning.Release, e.Error())
-			}
-
-			fileName := fmt.Sprintf(releaseFileName, target, arch, metadata.Versioning.Release, "tar.xz")
-			if e := os.WriteFile(filepath.Join(releaseDirName, fileName), b, os.ModePerm); e != nil {
-				logger.Fatal("target: %s, arch: %s, release: %s write archive failed: %s",
-					target, arch, metadata.Versioning.Release, e.Error())
-			}
-
-			data := map[string]string{
-				"target":  target,
-				"arch":    arch,
-				"version": metadata.Versioning.Release,
-				"sha256":  fmt.Sprintf("%x", sha256.Sum256(b)),
-			}
-
-			postgresGo := postgresTemplate.ExecuteFuncString(func(w io.Writer, tag string) (int, error) {
-				if v, ok := data[tag]; ok {
-					return w.Write([]byte(v))
-				}
-
-				if tg, ok := targetPath[target]; ok && tg != nil {
-					if v, ok := tg[tag]; ok {
-						return w.Write([]byte(v))
-					}
-				}
-
-				return 0, fmt.Errorf("unsupported tag: %s", tag)
-			})
-
-			if e := os.WriteFile(filepath.Join(releaseDirName,
-				fmt.Sprintf(releaseFileName, target, arch, metadata.Versioning.Release, "go")),
-				[]byte(postgresGo), os.ModePerm); e != nil {
-				logger.Fatal("target: %s, arch: %s, release: %s write postgres.go failed: %s",
-					target, arch, metadata.Versioning.Release, e.Error())
-			}
-
-			logger.Info("target: %s, arch: %s, release: %s write archive success",
-				target, arch, metadata.Versioning.Release)
+			getArchArchive(target, arch, postgresTemplate)
 		}
 	}
+
+	logger.Info("plase run 'gofmt -w release/' to format generated files")
+}
+
+func getArchArchive(target string, arch string, postgresTemplate *fasttemplate.Template) {
+	metadata, e := getMetadata(target, arch)
+	if e != nil {
+		logger.Fatal("target: %s, arch: %s get metadata failed: %s", target, arch, e.Error())
+	}
+
+	logger.Debug("target: %s, arch: %s, release: %s", target, arch, metadata.Versioning.Release)
+	logger.Debug("download url: %s", fmt.Sprintf(repositoryBinaryURL, target, arch, metadata.Versioning.Release))
+
+	b, e := getArchive(target, arch, metadata.Versioning.Release)
+	if e != nil {
+		logger.Fatal("target: %s, arch: %s, release: %s get archive failed: %s",
+			target, arch, metadata.Versioning.Release, e.Error())
+	}
+
+	fileName := fmt.Sprintf(releaseFileName, target, arch, metadata.Versioning.Release, "tar.xz")
+	if e := os.WriteFile(filepath.Join(releaseDirName, fileName), b, os.ModePerm); e != nil {
+		logger.Fatal("target: %s, arch: %s, release: %s write archive failed: %s",
+			target, arch, metadata.Versioning.Release, e.Error())
+	}
+
+	data := map[string]string{
+		"target":  target,
+		"arch":    arch,
+		"version": metadata.Versioning.Release,
+		"sha256":  fmt.Sprintf("%x", sha256.Sum256(b)),
+	}
+
+	postgresGo := postgresTemplate.ExecuteFuncString(func(w io.Writer, tag string) (int, error) {
+		if v, ok := data[tag]; ok {
+			return w.Write([]byte(v))
+		}
+
+		if tg, ok := targetPath[target]; ok && tg != nil {
+			if v, ok := tg[tag]; ok {
+				return w.Write([]byte(v))
+			}
+		}
+
+		return 0, fmt.Errorf("unsupported tag: %s", tag)
+	})
+
+	if e := os.WriteFile(filepath.Join(releaseDirName,
+		fmt.Sprintf(releaseFileName, target, arch, metadata.Versioning.Release, "go")),
+		[]byte(postgresGo), os.ModePerm); e != nil {
+		logger.Fatal("target: %s, arch: %s, release: %s write postgres.go failed: %s",
+			target, arch, metadata.Versioning.Release, e.Error())
+	}
+
+	logger.Info("target: %s, arch: %s, release: %s write archive success",
+		target, arch, metadata.Versioning.Release)
 }
 
 // translate system target and architecture

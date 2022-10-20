@@ -12,10 +12,10 @@ const (
 	Target  = "windows"
 	Arch    = "386"
 	Version = "10.22.0"
-    Sha256  = "2b33fe7370fbbb323d8b10223465cb45eb58018cf943aa8b2ed0e446de0f0145"
+	Sha256  = "2b33fe7370fbbb323d8b10223465cb45eb58018cf943aa8b2ed0e446de0f0145"
 
-	InitdbBinary = "bin/initdb.exe"
-	PgCliBinary  = "bin/pg_ctl.exe"
+	InitdbBinary   = "bin/initdb.exe"
+	PgCliBinary    = "bin/pg_ctl.exe"
 	PostgresBinary = "bin/postgres.exe"
 )
 
@@ -23,5 +23,3 @@ var (
 	//go:embed postgres-windows-386-10.22.0.tar.xz
 	Archive []byte
 )
-
-

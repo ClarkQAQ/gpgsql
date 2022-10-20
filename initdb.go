@@ -39,58 +39,9 @@ func (g *GpgsqlRuntime) Initdb(ctx context.Context, opts ...*InitdbOptions) (e e
 
 	opt := opts[0]
 
-	if strings.TrimSpace(g.data) == "" {
-		return errors.New("data directory is empty")
-	}
-
-	if strings.TrimSpace(g.username) == "" {
-		return errors.New("username is empty")
-	}
-
-	args := []string{
-		"--pgdata", g.data,
-		"--username", g.username,
-	}
-
-	if strings.TrimSpace(g.password) != "" {
-		f, e := os.CreateTemp(os.TempDir(), "*")
-		if e != nil {
-			return fmt.Errorf("failed to create temp file: %s", e.Error())
-		}
-
-		defer os.Remove(f.Name())
-
-		if _, e := f.WriteString(g.password); e != nil {
-			return fmt.Errorf("failed to write password to temp file: %s", e.Error())
-		}
-
-		args = append(args, "--pwfile", f.Name())
-	}
-
-	if strings.TrimSpace(opt.Encoding) != "" {
-		args = append(args, "--encoding", opt.Encoding)
-	}
-
-	if opt.NoLocale {
-		args = append(args, "--no-locale")
-	} else if strings.TrimSpace(opt.Locale) != "" {
-		args = append(args, "--locale", opt.Locale)
-	}
-
-	if strings.TrimSpace(opt.AuthMethod) != "" {
-		args = append(args, "--auth", opt.AuthMethod)
-	}
-
-	if opt.DataChecksums {
-		args = append(args, "--data-checksums")
-	}
-
-	if strings.TrimSpace(opt.TextSearchConfig) != "" {
-		args = append(args, "--text-search-config", opt.TextSearchConfig)
-	}
-
-	if len(opt.Args) > 0 {
-		args = append(args, opt.Args...)
+	args, e := initdbArgs(g, opt)
+	if e != nil {
+		return e
 	}
 
 	cmd := exec.CommandContext(ctx, initdbBinary, args...)
@@ -113,4 +64,53 @@ func (g *GpgsqlRuntime) Initdb(ctx context.Context, opts ...*InitdbOptions) (e e
 	}
 
 	return nil
+}
+
+func initdbArgs(g *GpgsqlRuntime, opt *InitdbOptions) ([]string, error) {
+	args := []string{
+		"--pgdata", g.data,
+		"--username", g.username,
+	}
+
+	switch {
+	case strings.TrimSpace(g.data) == "":
+		return nil, errors.New("data directory is empty")
+	case strings.TrimSpace(g.username) == "":
+		return nil, errors.New("username is empty")
+	case strings.TrimSpace(g.password) != "":
+		f, e := os.CreateTemp(os.TempDir(), "*")
+		if e != nil {
+			return nil, fmt.Errorf("failed to create temp file: %s", e.Error())
+		}
+
+		defer os.Remove(f.Name())
+
+		if _, e := f.WriteString(g.password); e != nil {
+			return nil, fmt.Errorf("failed to write password to temp file: %s", e.Error())
+		}
+
+		args = append(args, "--pwfile", f.Name())
+		fallthrough
+	case strings.TrimSpace(opt.Encoding) != "":
+		args = append(args, "--encoding", opt.Encoding)
+		fallthrough
+	case opt.NoLocale:
+		args = append(args, "--no-locale")
+		fallthrough
+	case strings.TrimSpace(opt.Locale) != "":
+		args = append(args, "--locale", opt.Locale)
+		fallthrough
+	case strings.TrimSpace(opt.AuthMethod) != "":
+		args = append(args, "--auth", opt.AuthMethod)
+		fallthrough
+	case opt.DataChecksums:
+		args = append(args, "--data-checksums")
+		fallthrough
+	case strings.TrimSpace(opt.TextSearchConfig) != "":
+		args = append(args, "--text-search-config", opt.TextSearchConfig)
+	}
+
+	args = append(args, opt.Args...)
+
+	return args, nil
 }

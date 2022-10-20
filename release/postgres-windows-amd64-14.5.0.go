@@ -12,10 +12,10 @@ const (
 	Target  = "windows"
 	Arch    = "amd64"
 	Version = "14.5.0"
-    Sha256  = "9451b8cb8f34605b4c434a757582f19619d1c635bf7a642050e2834dfc70825a"
+	Sha256  = "9451b8cb8f34605b4c434a757582f19619d1c635bf7a642050e2834dfc70825a"
 
-	InitdbBinary = "bin/initdb.exe"
-	PgCliBinary  = "bin/pg_ctl.exe"
+	InitdbBinary   = "bin/initdb.exe"
+	PgCliBinary    = "bin/pg_ctl.exe"
 	PostgresBinary = "bin/postgres.exe"
 )
 
@@ -23,5 +23,3 @@ var (
 	//go:embed postgres-windows-amd64-14.5.0.tar.xz
 	Archive []byte
 )
-
-

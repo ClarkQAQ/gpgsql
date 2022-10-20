@@ -12,10 +12,10 @@ const (
 	Target  = "linux"
 	Arch    = "386"
 	Version = "14.5.0"
-    Sha256  = "0e6677e916c928b6b2d28e5f9a1088dcffa734463a3f14aa619431d0486ea109"
+	Sha256  = "0e6677e916c928b6b2d28e5f9a1088dcffa734463a3f14aa619431d0486ea109"
 
-	InitdbBinary = "bin/initdb"
-	PgCliBinary  = "bin/pg_ctl"
+	InitdbBinary   = "bin/initdb"
+	PgCliBinary    = "bin/pg_ctl"
 	PostgresBinary = "bin/postgres"
 )
 
@@ -23,5 +23,3 @@ var (
 	//go:embed postgres-linux-386-14.5.0.tar.xz
 	Archive []byte
 )
-
-

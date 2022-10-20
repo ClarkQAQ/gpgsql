@@ -134,51 +134,40 @@ func (g *GpgsqlRuntime) DaemonArgs(opt *PostgreSqlOptions) (args []string, e err
 
 	args = append(args, "-p", fmt.Sprintf("%d", g.port))
 
-	if opt.Nbuffers > 0 {
+	switch {
+	case opt.Nbuffers > 0:
 		args = append(args, "-B", fmt.Sprintf("%d", opt.Nbuffers))
-	}
-
-	if opt.DebugLevel > 0 {
+		fallthrough
+	case opt.DebugLevel > 0:
 		args = append(args, "-d", fmt.Sprintf("%d", opt.DebugLevel))
-	}
-
-	if opt.DMY {
+		fallthrough
+	case opt.DMY:
 		args = append(args, "-e")
-	}
-
-	if opt.FsyncOff {
+		fallthrough
+	case opt.FsyncOff:
 		args = append(args, "-F")
-	}
-
-	if opt.EnableTcpConnections {
+		fallthrough
+	case opt.EnableTcpConnections:
 		args = append(args, "-i")
-	}
-
-	if strings.TrimSpace(opt.UnixSocket) != "" {
+		fallthrough
+	case strings.TrimSpace(opt.UnixSocket) != "":
 		args = append(args, "-k", opt.UnixSocket)
-	}
-
-	if opt.SSL {
+		fallthrough
+	case opt.SSL:
 		args = append(args, "-l")
-	}
-
-	if opt.MaxConnection > 0 {
+		fallthrough
+	case opt.MaxConnection > 0:
 		args = append(args, "-N", fmt.Sprintf("%d", opt.MaxConnection))
+		fallthrough
+	case opt.WorkMem > 0:
+		args = append(args, "-w", fmt.Sprintf("%d", opt.WorkMem))
 	}
 
-	if opt.WorkMem > 0 {
-		args = append(args, "-S", fmt.Sprintf("%d", opt.WorkMem))
+	for k, v := range opt.Parma {
+		args = append(args, "-c", fmt.Sprintf("%s=%s", k, v))
 	}
 
-	if opt.Parma != nil && len(opt.Parma) > 0 {
-		for k, v := range opt.Parma {
-			args = append(args, "-c", fmt.Sprintf("%s=%s", k, v))
-		}
-	}
-
-	if opt.Args != nil && len(opt.Args) > 0 {
-		args = append(args, opt.Args...)
-	}
+	args = append(args, opt.Args...)
 
 	return args, nil
 }
